@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, memo } from "react";
 import {
   KeyboardAvoidingView,
   StyleSheet,
@@ -7,10 +7,25 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../firebase";
 
-export const Login = useMemo(() => {
+export const Login = memo(() => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigation = useNavigation();
+
+  const handleSignUp = () => {
+    createUserWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        const user = userCredential.user;
+        console.log(user);
+      })
+      .catch((error) => {
+        console.log(error.message);
+      });
+  };
 
   return (
     <KeyboardAvoidingView style={styles.container} behavior="padding">
@@ -33,7 +48,7 @@ export const Login = useMemo(() => {
         <TouchableOpacity onPress={() => {}} style={styles.button}>
           <Text style={styles.buttonText}>Login</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => {}} style={styles.button}>
+        <TouchableOpacity onPress={handleSignUp} style={styles.button}>
           <Text style={styles.buttonText}>新規登録</Text>
         </TouchableOpacity>
       </View>
